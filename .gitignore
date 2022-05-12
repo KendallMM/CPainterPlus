@@ -1,0 +1,4 @@
+# This file is used to ignore files which are generated
+# ----------------------------------------------------------------------------
+build-PaintPlus-Desktop_Qt_6_2_4_GCC_64bit-Debug/
+build-PaintPlus-Cmake-Debug/
