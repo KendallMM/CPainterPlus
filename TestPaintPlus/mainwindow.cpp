@@ -6,36 +6,63 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
-}
 
-void MainWindow::paintEvent( QPaintEvent * event ){
-    QPainter painter(this);
-
-    painter.setPen(QPen(Qt::black, 2));
-
-    //ui->pushButton->clearFocus();
-
-    //ui->pushButton->setAutoFillBackground(true);
-
-    //ui->pushButton->setBackgroundRole();
-
-    //ui->pushButton->setForegroundRole();
-
-    //painter.setBackgroundMode();
-     QPainterPath path;
-    path.moveTo(QRandomGenerator::global()->generate() % 80, QRandomGenerator::global()->generate() % 320);
-
-    path.cubicTo(200, 80, 320, 80, 480, 320);
-
-    painter.setPen(QPen(Qt::black, 8));
-
-    painter.drawPath(path);
-
+    drawingActive = false;
 }
 
 
+
+void MainWindow::mouseReleaseEvent(QMouseEvent *event)
+{
+    //When the left mouse button is released, set the flag to false
+    if (event->button() == Qt::LeftButton)
+    {
+        drawingActive = false;
+    }
+}
+
+void MainWindow::mousePressEvent(QMouseEvent *e)
+{
+    if (e->button() == Qt::LeftButton){
+
+        point=e->pos();
+
+        drawingActive = true;
+
+        update();
+    }
+}
+
+void MainWindow::paintEvent(QPaintEvent *e)
+{
+    if(drawingActive){
+        setAttribute(Qt::WA_OpaquePaintEvent);
+        QPainter painter(this);
+        QPen linepen(Qt::red);
+        linepen.setCapStyle(Qt::RoundCap);
+        linepen.setWidth(30);
+        painter.setRenderHint(QPainter::Antialiasing,true);
+        painter.setPen(linepen);
+        painter.drawPoint(point);
+        qDebug() << point;
+    }
+
+}
+
+void MainWindow::mouseMoveEvent(QMouseEvent *event)
+{
+    //Check again if the left mouse button was clicked and whether we are drawing something
+    if ((event->buttons() & Qt::LeftButton) && drawingActive)
+    {
+        point = event->pos();
+        qDebug() << point;
+        //Update canvas
+        this->update();
+    }
+}
