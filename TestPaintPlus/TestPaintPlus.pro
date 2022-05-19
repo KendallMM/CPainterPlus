@@ -9,14 +9,20 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    colors_manage.cpp \
+    initialwindow.cpp \
     main.cpp \
-    mainwindow.cpp
+    scene.cpp \
+    whiteboard.cpp
 
 HEADERS += \
-    mainwindow.h
+    initialwindow.h \
+    scene.h \
+    whiteboard.h
 
 FORMS += \
-    mainwindow.ui
+    initialwindow.ui \
+    whiteboard.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

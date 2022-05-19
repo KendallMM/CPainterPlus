@@ -1,11 +1,13 @@
-#include "mainwindow.h"
-
+#include "whiteboard.h"
+#include "initialwindow.h"
 #include <QApplication>
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    MainWindow w;
+    initialWindow w;
     w.show();
+
     return a.exec();
 }
+
