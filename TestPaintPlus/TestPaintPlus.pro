@@ -10,15 +10,18 @@ CONFIG += c++17
 
 SOURCES += \
     colors_manage.cpp \
+    initialwindow.cpp \
     main.cpp \
     scene.cpp \
     whiteboard.cpp
 
 HEADERS += \
+    initialwindow.h \
     scene.h \
     whiteboard.h
 
 FORMS += \
+    initialwindow.ui \
     whiteboard.ui
 
 # Default rules for deployment.

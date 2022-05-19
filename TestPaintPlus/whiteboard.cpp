@@ -6,9 +6,21 @@ Whiteboard::Whiteboard(QWidget *parent) :
     ui(new Ui::Whiteboard)
 {
     ui->setupUi(this);
+
+}
+
+Whiteboard::~Whiteboard()
+{
+    delete ui;
+}
+
+void Whiteboard::buildCanvas(){
     scene = new Scene();                //add scene
     ui->graphicsView->setScene(scene);
-
+    ui->graphicsView->setMinimumWidth(getCanvasWidth());
+    ui->graphicsView->setMaximumWidth(getCanvasWidth());
+    ui->graphicsView->setMinimumHeight(getCanvasHeight());
+    ui->graphicsView->setMaximumHeight(getCanvasHeight());
     timer = new QTimer();
     connect(timer, &QTimer::timeout, this, &Whiteboard::Timer);
     timer->start(100);
@@ -19,9 +31,20 @@ Whiteboard::Whiteboard(QWidget *parent) :
     connect(scene, SIGNAL(redo_emit()),this, SLOT(redo_unable()));
 }
 
-Whiteboard::~Whiteboard()
-{
-    delete ui;
+int Whiteboard::getCanvasHeight(){
+    return this->canvasHeight;
+}
+
+void Whiteboard::setCanvasWidth(int width){
+    this->canvasWidth = width;
+}
+
+int Whiteboard::getCanvasWidth(){
+    return this->canvasWidth;
+}
+void Whiteboard::setCanvasHeight(int height){
+    this->canvasHeight = height;
+
 }
 
 void Whiteboard::Timer()

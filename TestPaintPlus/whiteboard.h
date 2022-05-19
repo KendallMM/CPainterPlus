@@ -19,13 +19,20 @@ class Whiteboard : public QWidget
 public:
     explicit Whiteboard(QWidget *parent = nullptr);
     ~Whiteboard();
+    int getCanvasWidth();
+    void setCanvasWidth(int width);
+    int getCanvasHeight();
+    void setCanvasHeight(int height);
+    void buildCanvas();
 
 private:
     Ui::Whiteboard *ui;
     QTimer *timer;      //timer for scene resize
     Scene *scene;
-
+    int canvasHeight;
+    int canvasWidth;
     void resizeEvent(QResizeEvent * event);
+
 
 private slots:
     void Timer();
