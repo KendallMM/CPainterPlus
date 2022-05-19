@@ -9,20 +9,19 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-    canvas.cpp \
     image.cpp \
     main.cpp \
     mainwindow.cpp\
-    dialog_windows.cpp
+    dialog_windows.cpp \
+    matrix.cpp
 
 HEADERS += \
-    canvas.h \
     image.h \
     mainwindow.h\
-    dialog_windows.h
-
+    dialog_windows.h\
+    constants.h \
+    matrix.h
 FORMS += \
-    canvas.ui \
     mainwindow.ui
 
 # Default rules for deployment.

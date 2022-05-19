@@ -18,21 +18,32 @@ Color::~Color()
 }
 
 Image::Image(int width, int height)
-    :m_width(width), m_height(height), m_colors(std::vector<Color>(width * height))
+    :m_width(width), m_height(height), matriz(width, height)
 {
 }
 Image::~Image()
 {
 }
-Color Image::GetColor(int x, int y) const{
-    return m_colors[y* m_width +x];
+Color Image::GetColor(int r, int c) const{
+    return *matriz.Matriz[r][c];
 }
-void Image::SetColor(const Color& color, int x, int y){
-    m_colors[y*m_width + x].r = color.r;
-    m_colors[y*m_width + x].g = color.g;
-    m_colors[y*m_width + x].b = color.b;
+void Image::SetColor(const Color& color, int r, int c){
+    matriz.Matriz[r][c]->r = color.r;
+    matriz.Matriz[r][c]->g = color.g;
+    matriz.Matriz[r][c]->b = color.b;
 }
 
+void Image::rotar(bool sentidoHorario){
+    int temp = m_width;
+    m_width=m_height;
+    m_height=temp;
+    if(sentidoHorario){
+        matriz.rotarDerecha();
+    }else{
+        matriz.rotarIzquierda();
+    }
+
+}
 void Image::Read(const char* path){
     std::ifstream f;
     f.open(path, std::ios::in | std::ios::binary);
@@ -58,29 +69,32 @@ void Image::Read(const char* path){
     unsigned char informationHeader[informationHeaderSize];
     f.read(reinterpret_cast<char*>(informationHeader),informationHeaderSize);
 
-    int fileSize = fileHeader[2] + (fileHeader[3] << 8) + (fileHeader[4] << 16) +(fileHeader[5] << 24);
-
     m_width = informationHeader[4] + (informationHeader[5] << 8) + (informationHeader[6] << 16) + (informationHeader[7] << 24);
     m_height = informationHeader[8] + (informationHeader[9] << 8) + (informationHeader[10] << 16) + (informationHeader[11] << 24);
 
-    m_colors.resize(m_width * m_height);
+    matriz.resized(m_width,m_height);
 
-    const int paddingAmount = ((4 - (m_width * 3) % 4) % 4);
-
-
+    int r = 0;
+    int c = 0;
     for (int y = 0; y < m_height; y++)
     {
         for (int x = 0 ; x < m_width ; x++)
         {
+            if (c%m_width==0 && c!=0){
+                r++;
+                c=0;
+            }
             unsigned char color[3];
             f.read(reinterpret_cast<char*>(color),3);
-            m_colors[y*m_width + x].r = static_cast<float>(color[2])/255.0f;
-            m_colors[y*m_width + x].g = static_cast<float>(color[1])/255.0f;
-            m_colors[y*m_width + x].b = static_cast<float>(color[0])/255.0f;
-
+            Color *a= new Color(static_cast<float>(color[2])/255.0f,static_cast<float>(color[1])/255.0f,static_cast<float>(color[0])/255.0f);
+            matriz.agregarUltimoObj(a,r,c);
+            c++;
         }
-        f.ignore(paddingAmount);
     }
+    rotar(true);
+    matriz.invertirVerticalmente();
+    matriz.invertirHorizontalmente();
+
 
     f.close();
     std::cout << "File read "<< std::endl;
@@ -173,12 +187,11 @@ void Image::Export(const char* path) const{
 
     f.write(reinterpret_cast<char*>(fileHeader),fileHeaderSize);
     f.write(reinterpret_cast<char*>(informationHeader),informationHeaderSize);
-
-    for (int y=0; y<m_height;y++){
-        for (int x=0;x<m_width;x++){
-            unsigned char r = static_cast<unsigned char>(GetColor(x,y).r*255.0f);
-            unsigned char g = static_cast<unsigned char>(GetColor(x,y).g*255.0f);
-            unsigned char b = static_cast<unsigned char>(GetColor(x,y).b*255.0f);
+    for (int i=0; i<m_height;i++){
+        for (int j=0;j<m_width;j++){
+            unsigned char r = static_cast<unsigned char>(GetColor(i,j).r*255.0f);
+            unsigned char g = static_cast<unsigned char>(GetColor(i,j).g*255.0f);
+            unsigned char b = static_cast<unsigned char>(GetColor(i,j).b*255.0f);
 
             unsigned char color[]={b,g,r};
             f.write(reinterpret_cast<char*>(color),3);

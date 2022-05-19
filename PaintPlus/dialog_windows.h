@@ -6,10 +6,9 @@
 #include <QDialog>
 #include <QSlider>
 #include <QButtonGroup>
-
+#include <QWidget>
+#include <QPainter>
 #include "constants.h"
-#include "tool.h"
-
 
 class DrawArea;
 

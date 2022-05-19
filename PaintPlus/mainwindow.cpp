@@ -7,6 +7,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    connect(ui->newFileButton, SIGNAL(clicked()),this, SLOT(OnNewImage()));
+
 }
 
 MainWindow::~MainWindow()
@@ -15,6 +17,9 @@ MainWindow::~MainWindow()
 }
 void MainWindow::OnNewImage()
 {
+    QPainter canvasPainter(this);
+    canvasPainter.drawPoint(this->x(),this->y());
+
     CanvasSizeDialog* newCanvas = new CanvasSizeDialog(this, "New Canvas");
     newCanvas->exec();
     // if user hit 'OK' button, create new image
@@ -22,8 +27,14 @@ void MainWindow::OnNewImage()
     {
         QSize size = QSize(newCanvas->getWidthValue(),
                            newCanvas->getHeightValue());
-        drawArea->createNewImage(size);
+        QSize size2 = QSize(newCanvas->getWidthValue()+80,
+                           newCanvas->getHeightValue()+80);
+        ui->canvas->resize(size);
+        this->resize(size2);
     }
     // done with the dialog, free it
     delete newCanvas;
+}
+void MainWindow::paintEvent()
+{
 }
