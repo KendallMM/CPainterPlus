@@ -1,11 +1,5 @@
 #include <vector>
-
-struct Color {
-    float r,g,b;
-    Color();
-    Color(float r, float g, float b);
-    ~Color();
-};
+#include "matrix.h"
 
 class Image
 {
@@ -13,12 +7,17 @@ public:
     Image(int width, int height);
     ~Image();
 
-    Color GetColor(int x, int y) const;
-    void SetColor(const Color& color, int x, int y);
+    Color GetColor(int r, int c) const;
+    void SetColor(const Color& color, int r, int c);
     void Read(const char* path);
     void Export(const char* path) const;
+    void rotar(bool sentidoHorario);
+    void create();
+    void cargar(const char *imagenCargada);
+    void print();
 private:
     int m_width;
     int m_height;
-    std::vector<Color> m_colors;
+    matrix matriz;
+
 };

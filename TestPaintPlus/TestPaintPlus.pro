@@ -9,21 +9,17 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-    image.cpp \
-    main.cpp \
-    matrix.cpp\
     colors_manage.cpp \
     initialwindow.cpp \
+    main.cpp \
     scene.cpp \
     whiteboard.cpp
 
 HEADERS += \
-    image.h \
-    constants.h \
-    matrix.h\
     initialwindow.h \
     scene.h \
     whiteboard.h
+
 FORMS += \
     initialwindow.ui \
     whiteboard.ui
