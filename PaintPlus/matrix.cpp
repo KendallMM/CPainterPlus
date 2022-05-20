@@ -19,6 +19,13 @@ matrix::matrix(int raw, int col){
 void matrix::agregarUltimoObj(Color *color, int raw, int col){
     Matriz[raw][col]=color;
 }
+void matrix::cargar(Color ***MatrizCargada, int ancho, int alto){
+    for (int r = 0; r<ancho;r++){
+        for(int c = 0; c<alto;c++){
+            Matriz[c][r]=MatrizCargada[c][r];
+        }
+    }
+}
 void matrix::resized(int raw, int col){
     tamano=raw*col;
     Matriz = new Color**[tamano];
@@ -33,6 +40,7 @@ void matrix::resized(int raw, int col){
         }
     }
 }
+
 void matrix::rotarIzquierda(){
     Color ***tempMatriz;
     tempMatriz = new Color**[tamano];

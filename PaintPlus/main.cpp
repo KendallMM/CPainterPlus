@@ -1,16 +1,12 @@
-#include "image.h"
-#include "mainwindow.h"
-
-
-#include <QApplication>
 #include <iostream>
+#include "whiteboard.h"
+#include "initialwindow.h"
+#include <QApplication>
 
 int main(int argc, char *argv[])
 {
-
-    Image copy(0,0);
-    std::cout<<"carga";
-    copy.Read("black.bmp");
-    std::cout<<"carga";
-    copy.Export("copy.bmp");
+    QApplication a(argc, argv);
+    initialWindow w;
+    w.show();
+    return a.exec();
 }

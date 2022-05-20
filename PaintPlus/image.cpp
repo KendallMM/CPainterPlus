@@ -32,7 +32,24 @@ void Image::SetColor(const Color& color, int r, int c){
     matriz.Matriz[r][c]->g = color.g;
     matriz.Matriz[r][c]->b = color.b;
 }
-
+void Image::create(){
+    for (int r = 0; r<m_width;r++){
+        for(int c = 0; c<m_height;c++){
+            Color *a= new Color(1,1,1);
+            matriz.Matriz[c][r]=a;
+        }
+    }
+}
+void Image::print(){
+    std::cout<<matriz.Matriz[0][0]->r<<std::endl;
+    std::cout<<matriz.Matriz[0][0]->g<<std::endl;
+    std::cout<<matriz.Matriz[0][0]->b<<std::endl;
+}
+void Image::cargar(const char* imagenCargada){
+    Image copy(0,0);
+    copy.Read(imagenCargada);
+    matriz.cargar(copy.matriz.Matriz,copy.m_width,copy.m_height);
+}
 void Image::rotar(bool sentidoHorario){
     int temp = m_width;
     m_width=m_height;
@@ -91,11 +108,6 @@ void Image::Read(const char* path){
             c++;
         }
     }
-    rotar(true);
-    matriz.invertirVerticalmente();
-    matriz.invertirHorizontalmente();
-
-
     f.close();
     std::cout << "File read "<< std::endl;
 }

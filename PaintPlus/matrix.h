@@ -21,6 +21,7 @@ public:
     void rotar180();
     void invertirHorizontalmente();
     void invertirVerticalmente();
+    void cargar(Color ***matrizCargada, int ancho, int alto);
     virtual ~matrix();
     Color ***Matriz;
 

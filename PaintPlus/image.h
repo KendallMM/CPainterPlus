@@ -12,8 +12,12 @@ public:
     void Read(const char* path);
     void Export(const char* path) const;
     void rotar(bool sentidoHorario);
+    void create();
+    void cargar(const char *imagenCargada);
+    void print();
 private:
     int m_width;
     int m_height;
     matrix matriz;
+
 };
