@@ -7,6 +7,8 @@
 #include <QPalette>
 #include "image.h"
 #include "scene.h"
+#include <QWheelEvent>
+#include <QScrollBar>
 
 
 namespace Ui {
@@ -25,6 +27,7 @@ public:
     int getCanvasHeight();
     void setCanvasHeight(int height);
     void buildCanvas();
+    //virtual void wheelEvent(QWheelEvent* event);
 
 private:
     Ui::Whiteboard *ui;
@@ -68,6 +71,8 @@ private slots:
     void on_yellow_clicked();
     void on_red_clicked();
     void on_pink_clicked();
+    void on_zoomButton_clicked();
+    void on_zoomoutButton_clicked();
 };
 
 #endif // WHITEBOARD_H
