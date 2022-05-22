@@ -6,6 +6,7 @@ Scene::Scene(QObject *parent) : QGraphicsScene(parent)
     size=4;             //standart parameters
     color= Qt::black;
     type = 0;
+    drag = false;
 }
 
 Scene::~Scene()
@@ -88,4 +89,9 @@ void Scene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
         prev = event->scenePos();
         update();
     }
+
+
 }
+
+
+
