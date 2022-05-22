@@ -7,6 +7,9 @@
 #include <QStack>
 #include <QPainterPath>
 #include <stack>
+#include <QWheelEvent>
+#include <QTimeLine>
+
 using namespace std;
 
 class Scene : public QGraphicsScene
@@ -17,6 +20,7 @@ class Scene : public QGraphicsScene
 public:
     int size,type;  //of current object
     QColor color;
+    bool drag;
     //QStack<QGraphicsItem*> undo_items, redo_items;
     stack <QGraphicsItem*> undo_items, redo_items;
     //QT undo/redo framework can be used instead
@@ -33,6 +37,8 @@ private slots:
     void mousePressEvent(QGraphicsSceneMouseEvent * event);
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
+    //void wheelEvent(QGraphicsSceneWheelEvent * event);
+
 
 signals:
     void clear_emit();

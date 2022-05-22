@@ -22,6 +22,8 @@ void Whiteboard::buildCanvas(){
     ui->graphicsView->setMaximumWidth(getCanvasWidth());
     ui->graphicsView->setMinimumHeight(getCanvasHeight());
     ui->graphicsView->setMaximumHeight(getCanvasHeight());
+    ui->graphicsView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+    ui->graphicsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
     timer = new QTimer();
     connect(timer, &QTimer::timeout, this, &Whiteboard::Timer);
     timer->start(100);
@@ -35,6 +37,47 @@ void Whiteboard::buildCanvas(){
     bmpCanvas.create();
     bmpCanvas.Export("Canvas.bmp");
 }
+
+//in cpp file
+/*void Whiteboard::wheelEvent(QWheelEvent *event){
+
+        ui->graphicsView->setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
+        // Scale the view / do the zoom
+        double scaleFactor = 1.15;
+        if(event->angleDelta().y() > 0) {
+            // Zoom in
+            ui->graphicsView->scale(scaleFactor, scaleFactor);
+
+        } else {
+            // Zooming out
+             ui->graphicsView->scale(1.0 / scaleFactor, 1.0 / scaleFactor);
+        }
+
+
+        //ui->graphicsView->setTransform(QTransform(h11, h12, h21, h22, 0, 0));
+}*/
+
+/*void Whiteboard::wheelEvent(QWheelEvent *event)
+{
+    if(event->angleDelta().y() > 0)
+    {
+        if(m_scale < MAX_SCALE)
+        {
+            std::cout << m_scale << std::endl;
+            this->scale(ZOOM_STEP, ZOOM_STEP);
+            m_scale *= ZOOM_STEP;
+        }
+    }
+    else if(event->angleDelta().y() < 0)
+    {
+        if(m_scale >= MIN_SCALE)
+        {
+            std::cout << m_scale << std::endl;
+            this->scale(1/ZOOM_STEP, 1/ZOOM_STEP);
+            m_scale *= 1/ZOOM_STEP;
+        }
+    }
+}*/
 
 int Whiteboard::getCanvasHeight(){
     return this->canvasHeight;
@@ -167,3 +210,21 @@ void Whiteboard::clear_stack(string stack){
     }
 
 }
+
+void Whiteboard::on_zoomButton_clicked()
+{
+    double scaleFactor = 1.15;
+
+    ui->graphicsView->scale(scaleFactor, scaleFactor);
+
+}
+
+
+void Whiteboard::on_zoomoutButton_clicked()
+{
+    double scaleFactor = 1.15;
+
+    ui->graphicsView->scale(1.0 / scaleFactor, 1.0 / scaleFactor);
+
+}
+
