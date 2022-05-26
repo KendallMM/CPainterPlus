@@ -17,12 +17,23 @@ Color::~Color()
 {
 }
 
-Image::Image(int width, int height)
-    :m_width(width), m_height(height), matriz(width, height)
+Image::Image()
+    :m_width(), m_height(), matriz()
 {
 }
 Image::~Image()
 {
+}
+void Image::init(int Width, int Height){
+    m_width=Width;
+    m_height=Height;
+    matriz.InitializeMatrix(Width,Height);
+}
+int Image::getImageHeight(){
+    return m_height;
+}
+int Image::getImageWidth(){
+    return m_width;
 }
 Color Image::GetColor(int r, int c) const{
     return *matriz.Matriz[r][c];
@@ -35,7 +46,6 @@ void Image::SetColor(const Color& color, int r, int c){
 void Image::create(){
     for (int r = 0; r<m_width;r++){
         for(int c = 0; c<m_height;c++){
-            Color *a= new Color(1,1,1);
             matriz.Matriz[c][r]=a;
         }
     }
@@ -46,7 +56,7 @@ void Image::print(){
     std::cout<<matriz.Matriz[0][0]->b<<std::endl;
 }
 void Image::cargar(const char* imagenCargada){
-    Image copy(0,0);
+    Image copy;
     copy.Read(imagenCargada);
     matriz.cargar(copy.matriz.Matriz,copy.m_width,copy.m_height);
 }
@@ -59,7 +69,16 @@ void Image::rotar(bool sentidoHorario){
     }else{
         matriz.rotarIzquierda();
     }
-
+}
+void Image::reflejar(bool reflejoVertical){
+    int temp = m_width;
+    m_width=m_height;
+    m_height=temp;
+    if(reflejoVertical){
+        matriz.reflejoVertical();
+    }else{
+        matriz.reflejoHorizontal();
+    }
 }
 void Image::Read(const char* path){
     std::ifstream f;
@@ -88,7 +107,7 @@ void Image::Read(const char* path){
 
     m_width = informationHeader[4] + (informationHeader[5] << 8) + (informationHeader[6] << 16) + (informationHeader[7] << 24);
     m_height = informationHeader[8] + (informationHeader[9] << 8) + (informationHeader[10] << 16) + (informationHeader[11] << 24);
-
+    matriz.InitializeMatrix(m_width,m_height);
     matriz.resized(m_width,m_height);
 
     int r = 0;
@@ -103,8 +122,8 @@ void Image::Read(const char* path){
             }
             unsigned char color[3];
             f.read(reinterpret_cast<char*>(color),3);
-            Color *a= new Color(static_cast<float>(color[2])/255.0f,static_cast<float>(color[1])/255.0f,static_cast<float>(color[0])/255.0f);
-            matriz.agregarUltimoObj(a,r,c);
+            Color *k= new Color(static_cast<float>(color[2])/255.0f,static_cast<float>(color[1])/255.0f,static_cast<float>(color[0])/255.0f);
+            matriz.agregarUltimoObj(k,r,c);
             c++;
         }
     }

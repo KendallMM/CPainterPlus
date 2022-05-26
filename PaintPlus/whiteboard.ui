@@ -102,8 +102,11 @@
          <property name="maximum">
           <number>10</number>
          </property>
+         <property name="value">
+          <number>1</number>
+         </property>
          <property name="sliderPosition">
-          <number>4</number>
+          <number>1</number>
          </property>
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
@@ -145,7 +148,7 @@ border-color: rgb(125, 125, 125);</string>
           <number>10</number>
          </property>
          <property name="value">
-          <number>4</number>
+          <number>1</number>
          </property>
         </widget>
        </item>
@@ -1011,7 +1014,7 @@ background-color: rgb(239, 11, 0);</string>
      <widget class="QGraphicsView" name="graphicsView">
       <property name="geometry">
        <rect>
-        <x>100</x>
+        <x>10</x>
         <y>80</y>
         <width>500</width>
         <height>500</height>
@@ -1039,10 +1042,10 @@ background-color: rgb(239, 11, 0);</string>
      <widget class="QPushButton" name="rotarD">
       <property name="geometry">
        <rect>
-        <x>470</x>
-        <y>50</y>
+        <x>550</x>
+        <y>80</y>
         <width>131</width>
-        <height>25</height>
+        <height>31</height>
        </rect>
       </property>
       <property name="text">
@@ -1052,10 +1055,10 @@ background-color: rgb(239, 11, 0);</string>
      <widget class="QPushButton" name="rotarI">
       <property name="geometry">
        <rect>
-        <x>580</x>
-        <y>10</y>
+        <x>550</x>
+        <y>120</y>
         <width>131</width>
-        <height>25</height>
+        <height>31</height>
        </rect>
       </property>
       <property name="text">
@@ -1065,10 +1068,10 @@ background-color: rgb(239, 11, 0);</string>
      <widget class="QPushButton" name="Cargar">
       <property name="geometry">
        <rect>
-        <x>640</x>
-        <y>50</y>
+        <x>570</x>
+        <y>10</y>
         <width>71</width>
-        <height>25</height>
+        <height>31</height>
        </rect>
       </property>
       <property name="text">
@@ -1078,8 +1081,8 @@ background-color: rgb(239, 11, 0);</string>
      <widget class="QPushButton" name="zoomButton">
       <property name="geometry">
        <rect>
-        <x>640</x>
-        <y>80</y>
+        <x>620</x>
+        <y>500</y>
         <width>61</width>
         <height>31</height>
        </rect>
@@ -1091,14 +1094,53 @@ background-color: rgb(239, 11, 0);</string>
      <widget class="QPushButton" name="zoomoutButton">
       <property name="geometry">
        <rect>
-        <x>630</x>
-        <y>120</y>
+        <x>620</x>
+        <y>540</y>
         <width>71</width>
         <height>41</height>
        </rect>
       </property>
       <property name="text">
        <string>Zoom out</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="reflejoVertical">
+      <property name="geometry">
+       <rect>
+        <x>550</x>
+        <y>160</y>
+        <width>131</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Reflejo Vertical</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="reflejoHorizontal">
+      <property name="geometry">
+       <rect>
+        <x>550</x>
+        <y>200</y>
+        <width>131</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Reflejo Horizontal</string>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="checkBox">
+      <property name="geometry">
+       <rect>
+        <x>560</x>
+        <y>250</y>
+        <width>51</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Dots</string>
       </property>
      </widget>
     </widget>

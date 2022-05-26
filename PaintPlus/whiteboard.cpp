@@ -1,10 +1,10 @@
 #include "whiteboard.h"
 #include "ui_whiteboard.h"
-
+#include <QFileDialog>
 
 Whiteboard::Whiteboard(QWidget *parent) :
     QWidget(parent),
-    ui(new Ui::Whiteboard),bmpCanvas(0,0)
+    ui(new Ui::Whiteboard)
 {
     ui->setupUi(this);
 
@@ -22,8 +22,10 @@ void Whiteboard::buildCanvas(){
     ui->graphicsView->setMaximumWidth(getCanvasWidth());
     ui->graphicsView->setMinimumHeight(getCanvasHeight());
     ui->graphicsView->setMaximumHeight(getCanvasHeight());
-    ui->graphicsView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
-    ui->graphicsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+    ui->graphicsView->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+    ui->graphicsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+    ui->graphicsView->setFixedSize(getCanvasWidth()+2*ui->graphicsView->frameWidth(), getCanvasHeight()+2*ui->graphicsView->frameWidth());
+    ui->graphicsView->setSceneRect( 0, 0, getCanvasWidth(), getCanvasHeight());
     timer = new QTimer();
     connect(timer, &QTimer::timeout, this, &Whiteboard::Timer);
     timer->start(100);
@@ -32,10 +34,10 @@ void Whiteboard::buildCanvas(){
     connect(scene, SIGNAL(clear_emit()),this, SLOT(clear_enable()));
     connect(scene, SIGNAL(redo_emit()),this, SLOT(redo_unable()));
     connect(scene, SIGNAL(redo_emit()),this, SLOT(redo_unable()));
-    Image temp(getCanvasWidth(),getCanvasHeight());
-    bmpCanvas=temp;
-    bmpCanvas.create();
-    bmpCanvas.Export("Canvas.bmp");
+    scene->bmpCanvas.init(getCanvasWidth(),getCanvasHeight());
+    scene->bmpCanvas.create();
+    scene->bmpCanvas.Export("Canvas.bmp");
+    scene->bmpCanvas.Read("Canvas.bmp");
 }
 
 //in cpp file
@@ -178,23 +180,27 @@ void Whiteboard::on_redo_clicked()
 }
 void Whiteboard::on_Cargar_clicked()
 {
-    bmpCanvas.Read("Canvas.bmp");
-    std::string str = "black.bmp";
-    const char * c = str.c_str();
-    bmpCanvas.cargar(c);
-    bmpCanvas.Export("Canvas.bmp");
+    on_clear_clicked();
+    QString fileName = QFileDialog::getOpenFileName(this,
+    tr("Open Image"), "/home/kendall/Escritorio/Proyecto 2 Datos 2/build-PaintPlus-Desktop_Qt_6_2_4_GCC_64bit-Debug", tr("Image Files (*.bmp)"));
+    std::string nel=fileName.toStdString();
+    const char * c = nel.c_str();
+    scene->bmpCanvas.cargar(c);
+    scene->bmpCanvas.Export("Canvas.bmp");
+    scene->drawImage();
+
 }
 void Whiteboard::on_rotarD_clicked()
 {
-    bmpCanvas.Read("Canvas.bmp");
-    bmpCanvas.rotar(true);
-    bmpCanvas.Export("Canvas.bmp");
+    scene->bmpCanvas.Read("Canvas.bmp");
+    scene->bmpCanvas.rotar(true);
+    scene->bmpCanvas.Export("Canvas.bmp");
 }
 void Whiteboard::on_rotarI_clicked()
 {
-    bmpCanvas.Read("Canvas.bmp");
-    bmpCanvas.rotar(false);
-    bmpCanvas.Export("Canvas.bmp");
+    scene->bmpCanvas.Read("Canvas.bmp");
+    scene->bmpCanvas.rotar(false);
+    scene->bmpCanvas.Export("Canvas.bmp");
 }
 
 void Whiteboard::clear_stack(string stack){
@@ -202,29 +208,46 @@ void Whiteboard::clear_stack(string stack){
         while(!scene->undo_items.empty()){
             scene->undo_items.pop();
         }
-
     }else{
         while(!scene->redo_items.empty()){
             scene->redo_items.pop();
         }
     }
-
 }
 
 void Whiteboard::on_zoomButton_clicked()
 {
     double scaleFactor = 1.15;
-
     ui->graphicsView->scale(scaleFactor, scaleFactor);
-
+    contadorZoom++;
 }
 
 
 void Whiteboard::on_zoomoutButton_clicked()
 {
-    double scaleFactor = 1.15;
+    if(contadorZoom!=0){
+        double scaleFactor = 1.15;
+        ui->graphicsView->scale(1.0 / scaleFactor, 1.0 / scaleFactor);
+        contadorZoom--;
+    }
+}
 
-    ui->graphicsView->scale(1.0 / scaleFactor, 1.0 / scaleFactor);
 
+void Whiteboard::on_reflejoVertical_clicked()
+{
+    scene->bmpCanvas.Read("Canvas.bmp");
+    scene->bmpCanvas.reflejar(true);
+    scene->bmpCanvas.Export("Canvas.bmp");
+}
+void Whiteboard::on_reflejoHorizontal_clicked()
+{
+    scene->bmpCanvas.Read("Canvas.bmp");
+    scene->bmpCanvas.reflejar(false);
+    scene->bmpCanvas.Export("Canvas.bmp");
+}
+
+void Whiteboard::on_checkBox_stateChanged(int arg1)
+{
+    scene->dots= !scene->dots;
 }
 
