@@ -5,7 +5,6 @@
 #include <QTimer>
 #include <QResizeEvent>
 #include <QPalette>
-#include "image.h"
 #include "scene.h"
 #include <QWheelEvent>
 #include <QScrollBar>
@@ -31,11 +30,11 @@ public:
 
 private:
     Ui::Whiteboard *ui;
-    Image bmpCanvas;
     QTimer *timer;      //timer for scene resize
     Scene *scene;
     int canvasHeight;
     int canvasWidth;
+
     void resizeEvent(QResizeEvent * event);
 
 private slots:
@@ -73,6 +72,14 @@ private slots:
     void on_pink_clicked();
     void on_zoomButton_clicked();
     void on_zoomoutButton_clicked();
+    void on_reflejoVertical_clicked();
+    void on_reflejoHorizontal_clicked();
+    void on_checkBox_stateChanged();
+    void on_pushButton_clicked();
+    void on_pushButton_2_clicked();
+    void on_pushButton_3_clicked();
+    void on_pushButton_7_clicked();
+    void on_pushButton_8_clicked();
 };
 
 #endif // WHITEBOARD_H

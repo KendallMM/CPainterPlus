@@ -1,10 +1,10 @@
 #include "whiteboard.h"
 #include "ui_whiteboard.h"
-
+#include <QFileDialog>
 
 Whiteboard::Whiteboard(QWidget *parent) :
     QWidget(parent),
-    ui(new Ui::Whiteboard),bmpCanvas(0,0)
+    ui(new Ui::Whiteboard)
 {
     ui->setupUi(this);
 
@@ -22,8 +22,10 @@ void Whiteboard::buildCanvas(){
     ui->graphicsView->setMaximumWidth(getCanvasWidth());
     ui->graphicsView->setMinimumHeight(getCanvasHeight());
     ui->graphicsView->setMaximumHeight(getCanvasHeight());
-    ui->graphicsView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
-    ui->graphicsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+    ui->graphicsView->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+    ui->graphicsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+    ui->graphicsView->setFixedSize(getCanvasWidth()+2*ui->graphicsView->frameWidth(), getCanvasHeight()+2*ui->graphicsView->frameWidth());
+    ui->graphicsView->setSceneRect( 0, 0, getCanvasWidth(), getCanvasHeight());
     timer = new QTimer();
     connect(timer, &QTimer::timeout, this, &Whiteboard::Timer);
     timer->start(100);
@@ -32,52 +34,12 @@ void Whiteboard::buildCanvas(){
     connect(scene, SIGNAL(clear_emit()),this, SLOT(clear_enable()));
     connect(scene, SIGNAL(redo_emit()),this, SLOT(redo_unable()));
     connect(scene, SIGNAL(redo_emit()),this, SLOT(redo_unable()));
-    Image temp(getCanvasWidth(),getCanvasHeight());
-    bmpCanvas=temp;
-    bmpCanvas.create();
-    bmpCanvas.Export("Canvas.bmp");
+    scene->bmpCanvas.init(getCanvasWidth(),getCanvasHeight());
+    scene->bmpCanvas.create();
+    scene->bmpCanvas.Export("Canvas.bmp");
+    scene->bmpCanvas.Read("Canvas.bmp");
+    scene->matrixWidth=getCanvasWidth();
 }
-
-//in cpp file
-/*void Whiteboard::wheelEvent(QWheelEvent *event){
-
-        ui->graphicsView->setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
-        // Scale the view / do the zoom
-        double scaleFactor = 1.15;
-        if(event->angleDelta().y() > 0) {
-            // Zoom in
-            ui->graphicsView->scale(scaleFactor, scaleFactor);
-
-        } else {
-            // Zooming out
-             ui->graphicsView->scale(1.0 / scaleFactor, 1.0 / scaleFactor);
-        }
-
-
-        //ui->graphicsView->setTransform(QTransform(h11, h12, h21, h22, 0, 0));
-}*/
-
-/*void Whiteboard::wheelEvent(QWheelEvent *event)
-{
-    if(event->angleDelta().y() > 0)
-    {
-        if(m_scale < MAX_SCALE)
-        {
-            std::cout << m_scale << std::endl;
-            this->scale(ZOOM_STEP, ZOOM_STEP);
-            m_scale *= ZOOM_STEP;
-        }
-    }
-    else if(event->angleDelta().y() < 0)
-    {
-        if(m_scale >= MIN_SCALE)
-        {
-            std::cout << m_scale << std::endl;
-            this->scale(1/ZOOM_STEP, 1/ZOOM_STEP);
-            m_scale *= 1/ZOOM_STEP;
-        }
-    }
-}*/
 
 int Whiteboard::getCanvasHeight(){
     return this->canvasHeight;
@@ -134,7 +96,6 @@ void Whiteboard::on_clear_clicked()
     ui->clear->setEnabled(false);
     scene->update();
 }
-
 void Whiteboard::clear_enable()
 {
     ui->clear->setEnabled(true);
@@ -178,23 +139,31 @@ void Whiteboard::on_redo_clicked()
 }
 void Whiteboard::on_Cargar_clicked()
 {
-    bmpCanvas.Read("Canvas.bmp");
-    std::string str = "black.bmp";
-    const char * c = str.c_str();
-    bmpCanvas.cargar(c);
-    bmpCanvas.Export("Canvas.bmp");
+    QString fileName = QFileDialog::getOpenFileName(this,
+    tr("Open Image"), "/home/kendall/Escritorio/Proyecto 2 Datos 2/build-PaintPlus-Desktop_Qt_6_2_4_GCC_64bit-Debug", tr("Image Files (*.bmp)"));
+    if(!fileName.isEmpty()){
+        on_clear_clicked();
+        std::string nel=fileName.toStdString();
+        const char * c = nel.c_str();
+        scene->bmpCanvas.cargar(c);
+        scene->bmpCanvas.Export("Canvas.bmp");
+        scene->drawImage();
+    }
+
 }
 void Whiteboard::on_rotarD_clicked()
 {
-    bmpCanvas.Read("Canvas.bmp");
-    bmpCanvas.rotar(true);
-    bmpCanvas.Export("Canvas.bmp");
+    scene->bmpCanvas.rotar(true);
+    scene->bmpCanvas.Export("Canvas.bmp");
+    on_clear_clicked();
+    scene->drawImage();
 }
 void Whiteboard::on_rotarI_clicked()
 {
-    bmpCanvas.Read("Canvas.bmp");
-    bmpCanvas.rotar(false);
-    bmpCanvas.Export("Canvas.bmp");
+    scene->bmpCanvas.rotar(false);
+    scene->bmpCanvas.Export("Canvas.bmp");
+    on_clear_clicked();
+    scene->drawImage();
 }
 
 void Whiteboard::clear_stack(string stack){
@@ -202,29 +171,96 @@ void Whiteboard::clear_stack(string stack){
         while(!scene->undo_items.empty()){
             scene->undo_items.pop();
         }
-
     }else{
         while(!scene->redo_items.empty()){
             scene->redo_items.pop();
         }
     }
-
 }
 
 void Whiteboard::on_zoomButton_clicked()
 {
     double scaleFactor = 1.15;
-
     ui->graphicsView->scale(scaleFactor, scaleFactor);
-
+    scene->contadorZoom+=0.15;
 }
 
 
 void Whiteboard::on_zoomoutButton_clicked()
 {
-    double scaleFactor = 1.15;
+    if(scene->contadorZoom>0){
+        double scaleFactor = 1.15;
+        ui->graphicsView->scale(1.0 / scaleFactor, 1.0 / scaleFactor);
+        scene->contadorZoom-=0.15;
+    }
+}
 
-    ui->graphicsView->scale(1.0 / scaleFactor, 1.0 / scaleFactor);
 
+void Whiteboard::on_reflejoVertical_clicked()
+{
+    scene->bmpCanvas.reflejar(true);
+    scene->bmpCanvas.Export("Canvas.bmp");
+    on_clear_clicked();
+    scene->drawImage();
+}
+void Whiteboard::on_reflejoHorizontal_clicked()
+{
+    scene->bmpCanvas.reflejar(false);
+    scene->bmpCanvas.Export("Canvas.bmp");
+    on_clear_clicked();
+    scene->drawImage();
+}
+
+void Whiteboard::on_checkBox_stateChanged()
+{
+    scene->dots= !scene->dots;
+}
+
+
+void Whiteboard::on_pushButton_clicked()
+{
+    scene->bmpCanvas.grayScale();
+    scene->bmpCanvas.Export("Canvas.bmp");
+    on_clear_clicked();
+    scene->drawImage();
+}
+
+
+void Whiteboard::on_pushButton_2_clicked()
+{
+    scene->bmpCanvas.negativeColors();
+    scene->bmpCanvas.Export("Canvas.bmp");
+    on_clear_clicked();
+    scene->drawImage();
+}
+
+
+void Whiteboard::on_pushButton_3_clicked()
+{
+    scene->bmpCanvas.pixelate();
+    scene->bmpCanvas.Export("Canvas.bmp");
+    on_clear_clicked();
+    scene->drawImage();
+}
+
+
+void Whiteboard::on_pushButton_7_clicked()
+{
+    on_clear_clicked();
+    scene->drawImage();
+    QString fileName = QFileDialog::getSaveFileName();
+    std::string nel=fileName.toStdString()+".bmp";
+    const char * c = nel.c_str();
+    scene->bmpCanvas.Export(c);
+    std::cout<<"File created\n";
+}
+
+
+void Whiteboard::on_pushButton_8_clicked()
+{
+    scene->bmpCanvas.cellShade();
+    scene->bmpCanvas.Export("Canvas.bmp");
+    on_clear_clicked();
+    scene->drawImage();
 }
 

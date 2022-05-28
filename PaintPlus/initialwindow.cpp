@@ -2,6 +2,7 @@
 #include "ui_initialwindow.h"
 
 
+
 initialWindow::initialWindow(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::initialWindow)
@@ -43,5 +44,5 @@ int initialWindow::getWidth(){
 }
 
 int initialWindow::getHeight(){
-    return ui->linealto->text().toInt();
+    return ui->lineancho->text().toInt();
 }

@@ -2,13 +2,15 @@
 #include "matrix.h"
 using namespace std;
 
-matrix::matrix(int raw, int col){
+matrix::matrix(){
+}
+void matrix::InitializeMatrix(int raw, int col){
     tamano=raw*col;
     Matriz = new Color**[tamano];
     raws=raw;
     cols=col;
     for (int i=0; i<tamano; i++){
-        Matriz[i]= new Color*[tamano];
+        Matriz[i] = new Color*[tamano];
     }
     for (int r = 0; r<raws;r++){
         for(int c = 0; c<cols;c++){
@@ -26,119 +28,63 @@ void matrix::cargar(Color ***MatrizCargada, int ancho, int alto){
         }
     }
 }
-void matrix::resized(int raw, int col){
-    tamano=raw*col;
-    Matriz = new Color**[tamano];
-    raws=raw;
-    cols=col;
-    for (int i=0; i<tamano; i++){
-        Matriz[i]= new Color*[tamano];
+void matrix::swap(int x1, int x2, int y1, int y2){
+    temp=Matriz[x1][x2];
+    Matriz[x1][x2]=Matriz[y1][y2];
+    Matriz[y1][y2]=temp;
+}
+
+void matrix::rotarIzquierda(){
+    reflejoVertical();
+    // Transposición de la matriz
+    for (int i = 0; i < raws; i++){
+        for (int j = i; j < raws; j++){
+            swap(i,j,j,i);
+        }
     }
-    for (int r = 0; r<raws;r++){
-        for(int c = 0; c<cols;c++){
-            Matriz[r][c] = NULL;
+}
+void matrix::rotarDerecha(){
+    int n = cols; // n = tamaño de la matriz cuadrada
+    // Se itera sobre todos los límites de la matriz
+    for (int i = 0; i <= n / 2 - 1; i++) {
+        // para cada límite, siga tomando 4 elementos (uno
+        // cada uno a lo largo de los 4 bordes) y cámbielos
+        // en sentido contrario a las agujas del reloj
+        for (int j = 0; j <= n - 2 * i - 2; j++) {
+            a=Matriz[i + j][i];
+            b=Matriz[n - 1 - i][i + j];
+            c=Matriz[n - 1 - i - j][n - 1 - i];
+            d=Matriz[i][n - 1 - i - j];
+
+            Matriz[i + j][i] = d;
+            Matriz[n - 1 - i][i + j] = a;
+            Matriz[n - 1 - i - j][n - 1 - i] = b;
+            Matriz[i][n - 1 - i - j] = c;
         }
     }
 }
 
-void matrix::rotarIzquierda(){
-    Color ***tempMatriz;
-    tempMatriz = new Color**[tamano];
-    for (int i=0; i<tamano; i++){
-        tempMatriz[i]= new Color*[tamano];
-    }
-    for (int r = 0; r<raws;r++){
-        for(int c = 0; c<cols;c++){
-            tempMatriz[c][r] = NULL;
-        }
-    }
-    for (int r = 0; r<raws;r++){
-        for(int c = 0; c<cols;c++){
-            tempMatriz[r][c]=Matriz[cols-1-c][r];
-        }
-    }
-    resized(cols,raws);
-    Matriz=tempMatriz;
+void matrix::reflejoHorizontal(){
+    reflejoVertical();
+    rotarIzquierda();
+    rotarIzquierda();
 }
-void matrix::rotarDerecha(){
-    Color ***tempMatriz;
-    tempMatriz = new Color**[tamano];
-    for (int i=0; i<tamano; i++){
-        tempMatriz[i]= new Color*[tamano];
-    }
-    for (int r = 0; r<raws;r++){
-        for(int c = 0; c<cols;c++){
-            tempMatriz[c][r] = NULL;
+void matrix::reflejoVertical(){
+    int k;
+    //Funcion para invertir las columnas de la matriz
+    for (int i = 0; i < raws; i++){
+        k = raws-1;// k = tamaño de la matriz cuadrada -1 debido a iniciar
+        // iteraciones en 0.
+        for (int j = 0; j < k; j++){
+        swap(j,i,k,i);
+        k--;
         }
     }
-    for (int r = 0; r<raws;r++){
-        for(int c = 0; c<cols;c++){
-            tempMatriz[r][c]=Matriz[c][raws-1-r];
-        }
-    }
-    resized(cols,raws);
-    Matriz=tempMatriz;
 }
-void matrix::rotar180(){
-    Color ***tempMatriz;
-    tempMatriz = new Color**[tamano];
-    for (int i=0; i<tamano; i++){
-        tempMatriz[i]= new Color*[tamano];
-    }
-    for (int r = 0; r<raws;r++){
-        for(int c = 0; c<cols;c++){
-            tempMatriz[c][r] = NULL;
-        }
-    }
-    for (int r = 0; r<raws;r++){
-        for(int c = 0; c<cols;c++){
-            tempMatriz[c][r]=Matriz[cols-1-c][raws-1-r];
-        }
-    }
-    resized(cols,raws);
-    Matriz=tempMatriz;
-}
-void matrix::invertirHorizontalmente(){
-    Color ***tempMatriz;
-    tempMatriz = new Color**[tamano];
-    for (int i=0; i<tamano; i++){
-        tempMatriz[i]= new Color*[tamano];
-    }
-    for (int r = 0; r<raws;r++){
-        for(int c = 0; c<cols;c++){
-            tempMatriz[c][r] = NULL;
-        }
-    }
-    for (int r = 0; r<raws;r++){
-        for(int c = 0; c<cols;c++){
-            tempMatriz[c][raws-1-r]=Matriz[c][r];
-        }
-    }
-    resized(cols,raws);
-    Matriz=tempMatriz;
-}
-void matrix::invertirVerticalmente(){
-    Color ***tempMatriz;
-    tempMatriz = new Color**[tamano];
-    for (int i=0; i<tamano; i++){
-        tempMatriz[i]= new Color*[tamano];
-    }
-    for (int r = 0; r<raws;r++){
-        for(int c = 0; c<cols;c++){
-            tempMatriz[c][r] = NULL;
-        }
-    }
-    for (int r = 0; r<raws;r++){
-        for(int c = 0; c<cols;c++){
-            tempMatriz[cols-1-c][r]=Matriz[c][r];
-        }
-    }
-    resized(cols,raws);
-    Matriz=tempMatriz;
-}
+
 matrix::~matrix(){
     for (int i=0; i<tamano; i++){
-        delete Matriz[i];
-    }
-    delete Matriz;
+            delete Matriz[i];
+        }
+        delete Matriz;
 }
