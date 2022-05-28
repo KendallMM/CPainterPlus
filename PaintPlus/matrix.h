@@ -2,6 +2,8 @@
 #define MATRIX_H
 #include <iostream>
 
+
+
 struct Color {
     float r,g,b;
     Color();
@@ -14,7 +16,6 @@ int raws,cols;
 int tamano;
 public:
     matrix();
-    void resized(int raw, int col);
     void InitializeMatrix(int raw, int col);
     void agregarUltimoObj(Color *, int raw, int col);
     void rotarIzquierda();
@@ -24,6 +25,8 @@ public:
     void cargar(Color ***matrizCargada, int ancho, int alto);
     void swap(int x1, int x2, int y1, int y2);
     virtual ~matrix();
+    Color *a,*b,*c,*d;
+    Color* temp;
     Color ***Matriz;
 
 };

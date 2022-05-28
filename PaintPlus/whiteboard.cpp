@@ -38,6 +38,7 @@ void Whiteboard::buildCanvas(){
     scene->bmpCanvas.create();
     scene->bmpCanvas.Export("Canvas.bmp");
     scene->bmpCanvas.Read("Canvas.bmp");
+    scene->matrixWidth=getCanvasWidth();
 }
 
 //in cpp file
@@ -192,15 +193,17 @@ void Whiteboard::on_Cargar_clicked()
 }
 void Whiteboard::on_rotarD_clicked()
 {
-    scene->bmpCanvas.Read("Canvas.bmp");
     scene->bmpCanvas.rotar(true);
     scene->bmpCanvas.Export("Canvas.bmp");
+    on_clear_clicked();
+    scene->drawImage();
 }
 void Whiteboard::on_rotarI_clicked()
 {
-    scene->bmpCanvas.Read("Canvas.bmp");
     scene->bmpCanvas.rotar(false);
     scene->bmpCanvas.Export("Canvas.bmp");
+    on_clear_clicked();
+    scene->drawImage();
 }
 
 void Whiteboard::clear_stack(string stack){
@@ -219,35 +222,64 @@ void Whiteboard::on_zoomButton_clicked()
 {
     double scaleFactor = 1.15;
     ui->graphicsView->scale(scaleFactor, scaleFactor);
-    contadorZoom++;
+    scene->contadorZoom+=0.15;
 }
 
 
 void Whiteboard::on_zoomoutButton_clicked()
 {
-    if(contadorZoom!=0){
+    if(scene->contadorZoom>0){
         double scaleFactor = 1.15;
         ui->graphicsView->scale(1.0 / scaleFactor, 1.0 / scaleFactor);
-        contadorZoom--;
+        scene->contadorZoom-=0.15;
     }
 }
 
 
 void Whiteboard::on_reflejoVertical_clicked()
 {
-    scene->bmpCanvas.Read("Canvas.bmp");
     scene->bmpCanvas.reflejar(true);
     scene->bmpCanvas.Export("Canvas.bmp");
+    on_clear_clicked();
+    scene->drawImage();
 }
 void Whiteboard::on_reflejoHorizontal_clicked()
 {
-    scene->bmpCanvas.Read("Canvas.bmp");
     scene->bmpCanvas.reflejar(false);
     scene->bmpCanvas.Export("Canvas.bmp");
+    on_clear_clicked();
+    scene->drawImage();
 }
 
-void Whiteboard::on_checkBox_stateChanged(int arg1)
+void Whiteboard::on_checkBox_stateChanged()
 {
     scene->dots= !scene->dots;
+}
+
+
+void Whiteboard::on_pushButton_clicked()
+{
+    scene->bmpCanvas.grayScale();
+    scene->bmpCanvas.Export("Canvas.bmp");
+    on_clear_clicked();
+    scene->drawImage();
+}
+
+
+void Whiteboard::on_pushButton_2_clicked()
+{
+    scene->bmpCanvas.negativeColors();
+    scene->bmpCanvas.Export("Canvas.bmp");
+    on_clear_clicked();
+    scene->drawImage();
+}
+
+
+void Whiteboard::on_pushButton_3_clicked()
+{
+    scene->bmpCanvas.pixelate();
+    scene->bmpCanvas.Export("Canvas.bmp");
+    on_clear_clicked();
+    scene->drawImage();
 }
 

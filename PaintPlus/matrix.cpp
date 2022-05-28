@@ -29,40 +29,27 @@ void matrix::cargar(Color ***MatrizCargada, int ancho, int alto){
     }
 }
 void matrix::swap(int x1, int x2, int y1, int y2){
-    Color* temp=Matriz[x1][x2];
+    temp=Matriz[x1][x2];
     Matriz[x1][x2]=Matriz[y1][y2];
     Matriz[y1][y2]=temp;
 }
-void matrix::resized(int raw, int col){
-    raws=raw;
-    cols=col;
-}
+
 void matrix::rotarIzquierda(){
-    int k;
-    for (int i = 0; i < raws; i++){
-        k = raws-1;
-        for (int j = 0; j < k; j++){
-        swap(j,i,k,i);
-        k--;
-        }
-    }
+    reflejoVertical();
+    // Transposición de la matriz
     for (int i = 0; i < raws; i++){
         for (int j = i; j < raws; j++){
             swap(i,j,j,i);
         }
     }
-    resized(cols,raws);
 }
 void matrix::rotarDerecha(){
-    int n = cols; // n=size of the square matrix
-    Color *a,*b,*c,*d;
-
-    // iterate over all the boundaries of the matrix
+    int n = cols; // n = tamaño de la matriz cuadrada
+    // Se itera sobre todos los límites de la matriz
     for (int i = 0; i <= n / 2 - 1; i++) {
-
-        // for each boundary, keep on taking 4 elements (one
-        // each along the 4 edges) and swap them in
-        // anticlockwise manner
+        // para cada límite, siga tomando 4 elementos (uno
+        // cada uno a lo largo de los 4 bordes) y cámbielos
+        // en sentido contrario a las agujas del reloj
         for (int j = 0; j <= n - 2 * i - 2; j++) {
             a=Matriz[i + j][i];
             b=Matriz[n - 1 - i][i + j];
@@ -75,24 +62,29 @@ void matrix::rotarDerecha(){
             Matriz[i][n - 1 - i - j] = c;
         }
     }
-    resized(cols,raws);
 }
+
 void matrix::reflejoHorizontal(){
     reflejoVertical();
     rotarIzquierda();
     rotarIzquierda();
-    resized(cols,raws);
 }
 void matrix::reflejoVertical(){
     int k;
+    //Funcion para invertir las columnas de la matriz
     for (int i = 0; i < raws; i++){
-        k = raws-1;
+        k = raws-1;// k = tamaño de la matriz cuadrada -1 debido a iniciar
+        // iteraciones en 0.
         for (int j = 0; j < k; j++){
         swap(j,i,k,i);
         k--;
         }
     }
-    resized(cols,raws);
 }
+
 matrix::~matrix(){
+    for (int i=0; i<tamano; i++){
+            delete Matriz[i];
+        }
+        delete Matriz;
 }

@@ -34,7 +34,7 @@ private:
     Scene *scene;
     int canvasHeight;
     int canvasWidth;
-    int contadorZoom;
+
     void resizeEvent(QResizeEvent * event);
 
 private slots:
@@ -74,7 +74,10 @@ private slots:
     void on_zoomoutButton_clicked();
     void on_reflejoVertical_clicked();
     void on_reflejoHorizontal_clicked();
-    void on_checkBox_stateChanged(int arg1);
+    void on_checkBox_stateChanged();
+    void on_pushButton_clicked();
+    void on_pushButton_2_clicked();
+    void on_pushButton_3_clicked();
 };
 
 #endif // WHITEBOARD_H

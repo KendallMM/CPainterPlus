@@ -19,7 +19,6 @@ SOURCES += \
 
 HEADERS += \
     image.h \
-    constants.h \
     matrix.h\
     initialwindow.h \
     scene.h \
