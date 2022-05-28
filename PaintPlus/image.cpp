@@ -66,21 +66,55 @@ void Image::negativeColors(){
         }
     }
 }
+void Image::cellShade() {
+    //loop through each pixel
+    for(int w=0;w<m_width;w++)
+        for(int h=0;h<m_width;h++){
+
+            //grab R,G,B,A components of pixel and bitshift to make number between 0-255
+            double red = matriz.Matriz[w][h]->r*255;
+            double green = matriz.Matriz[w][h]->g*255;
+            double blue = matriz.Matriz[w][h]->b*255;
+
+            //find the # (0,128,255)that the value of R,G or B is closest to
+            red = findClosest(red);
+            green = findClosest(green);
+            blue = findClosest(blue);
+
+            //bitshift colors back to original position
+            red = red/255;
+            green = green/255;
+            blue = blue/255;
+            tempColor.r=red;
+            tempColor.g=green;
+            tempColor.b=blue;
+
+            //set b.pixel[w][h] = to newly compiled color
+            SetColor(tempColor,w,h);
+        }
+}
+//findClosest
+//Parameter: integer n,
+//Description:	takes in R,G,B,A between 0-255 and finds
+//		closest # of 0,128, and 255
+int Image::findClosest(int n){
+    int t=n;
+    abs(t-128)<t && abs(t-128) < abs(t-255)? n=128:n=0;
+    abs(t-255)>=t && abs(t-255) >= abs(t-128)?:n=255;
+    return n;
+}
 void Image::pixelate() {
     //loop through each pixel
     for(int w =0;w<m_width;w+=8){
         for(int h=0;h<m_width;h+=8){
-
             double avgR = 0;
             double avgG = 0;
             double avgB = 0;
-
             for(int i = w;i < w + 8;i++)
                 for(int j = h;j< h+8;j++){
                     avgR = matriz.Matriz[i][j]->r*255;
                     avgG = matriz.Matriz[i][j]->g*255;
                     avgB = matriz.Matriz[i][j]->b*255;
-
                 }
             avgR = (avgR/255);
             avgG = (avgG/255);
@@ -109,11 +143,6 @@ void Image::create(){
             matriz.Matriz[c][r]=a;
         }
     }
-}
-void Image::print(){
-    std::cout<<matriz.Matriz[0][0]->r<<std::endl;
-    std::cout<<matriz.Matriz[0][0]->g<<std::endl;
-    std::cout<<matriz.Matriz[0][0]->b<<std::endl;
 }
 void Image::cargar(const char* imagenCargada){
     Image copy;
@@ -242,7 +271,6 @@ void Image::Export(const char* path) const{
         f.write(reinterpret_cast<char*>(bmpPad),paddingAmount);
     }
     f.close();
-    std::cout<<"File created\n";
 }
 void Image::bfss(int m, int n, int x, int y, Color prevC,Color newC)
 {
@@ -291,7 +319,6 @@ void Image::bfss(int m, int n, int x, int y, Color prevC,Color newC)
       if (validCoord(x - 1, y, n, m, prevC, newC)
           && vis[x - 1][y] == 0)
       {
-          cout<<"AAAA"<<endl;
         obj.push({ x - 1, y });
         vis[x - 1][y] = 1;
       }

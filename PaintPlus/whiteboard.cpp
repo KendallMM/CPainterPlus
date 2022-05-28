@@ -41,47 +41,6 @@ void Whiteboard::buildCanvas(){
     scene->matrixWidth=getCanvasWidth();
 }
 
-//in cpp file
-/*void Whiteboard::wheelEvent(QWheelEvent *event){
-
-        ui->graphicsView->setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
-        // Scale the view / do the zoom
-        double scaleFactor = 1.15;
-        if(event->angleDelta().y() > 0) {
-            // Zoom in
-            ui->graphicsView->scale(scaleFactor, scaleFactor);
-
-        } else {
-            // Zooming out
-             ui->graphicsView->scale(1.0 / scaleFactor, 1.0 / scaleFactor);
-        }
-
-
-        //ui->graphicsView->setTransform(QTransform(h11, h12, h21, h22, 0, 0));
-}*/
-
-/*void Whiteboard::wheelEvent(QWheelEvent *event)
-{
-    if(event->angleDelta().y() > 0)
-    {
-        if(m_scale < MAX_SCALE)
-        {
-            std::cout << m_scale << std::endl;
-            this->scale(ZOOM_STEP, ZOOM_STEP);
-            m_scale *= ZOOM_STEP;
-        }
-    }
-    else if(event->angleDelta().y() < 0)
-    {
-        if(m_scale >= MIN_SCALE)
-        {
-            std::cout << m_scale << std::endl;
-            this->scale(1/ZOOM_STEP, 1/ZOOM_STEP);
-            m_scale *= 1/ZOOM_STEP;
-        }
-    }
-}*/
-
 int Whiteboard::getCanvasHeight(){
     return this->canvasHeight;
 }
@@ -137,7 +96,6 @@ void Whiteboard::on_clear_clicked()
     ui->clear->setEnabled(false);
     scene->update();
 }
-
 void Whiteboard::clear_enable()
 {
     ui->clear->setEnabled(true);
@@ -181,14 +139,16 @@ void Whiteboard::on_redo_clicked()
 }
 void Whiteboard::on_Cargar_clicked()
 {
-    on_clear_clicked();
     QString fileName = QFileDialog::getOpenFileName(this,
     tr("Open Image"), "/home/kendall/Escritorio/Proyecto 2 Datos 2/build-PaintPlus-Desktop_Qt_6_2_4_GCC_64bit-Debug", tr("Image Files (*.bmp)"));
-    std::string nel=fileName.toStdString();
-    const char * c = nel.c_str();
-    scene->bmpCanvas.cargar(c);
-    scene->bmpCanvas.Export("Canvas.bmp");
-    scene->drawImage();
+    if(!fileName.isEmpty()){
+        on_clear_clicked();
+        std::string nel=fileName.toStdString();
+        const char * c = nel.c_str();
+        scene->bmpCanvas.cargar(c);
+        scene->bmpCanvas.Export("Canvas.bmp");
+        scene->drawImage();
+    }
 
 }
 void Whiteboard::on_rotarD_clicked()
@@ -278,6 +238,27 @@ void Whiteboard::on_pushButton_2_clicked()
 void Whiteboard::on_pushButton_3_clicked()
 {
     scene->bmpCanvas.pixelate();
+    scene->bmpCanvas.Export("Canvas.bmp");
+    on_clear_clicked();
+    scene->drawImage();
+}
+
+
+void Whiteboard::on_pushButton_7_clicked()
+{
+    on_clear_clicked();
+    scene->drawImage();
+    QString fileName = QFileDialog::getSaveFileName();
+    std::string nel=fileName.toStdString()+".bmp";
+    const char * c = nel.c_str();
+    scene->bmpCanvas.Export(c);
+    std::cout<<"File created\n";
+}
+
+
+void Whiteboard::on_pushButton_8_clicked()
+{
+    scene->bmpCanvas.cellShade();
     scene->bmpCanvas.Export("Canvas.bmp");
     on_clear_clicked();
     scene->drawImage();

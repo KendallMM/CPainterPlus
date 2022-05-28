@@ -56,7 +56,8 @@ private slots:
     void pencil(QGraphicsSceneMouseEvent *event);
     void PixelInicial(QGraphicsSceneMouseEvent *event);
     void DrawLine(int x1, int y1, int x2, int y2, int dx, int dy, int decide);
-    void validarCoord();
+    void validarCoordRectangulo();
+    void validarCoordLinea();
     //void wheelEvent(QGraphicsSceneWheelEvent * event);
     void bfs(int n, int m, int x, int y,Color prevC, Color newC);
     void drawRect();

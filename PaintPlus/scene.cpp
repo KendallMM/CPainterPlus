@@ -1,5 +1,4 @@
 #include "scene.h"
-#include <QDebug>
 #include <iostream>
 
 
@@ -20,11 +19,12 @@ void Scene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
         emit clear_emit();
     path = QPainterPath();  //del old path
     last = event->scenePos();
-    validarCoord();
     if(type==2){
+        validarCoordRectangulo();
         drawRect();
     }
-    if(type==0){
+    if(type==1){
+        validarCoordLinea();
         int dx=abs(last.x() - prev.x());
         int dy=abs(last.y() - prev.y());
         if (dx > dy){
@@ -54,13 +54,12 @@ void Scene::mousePressEvent(QGraphicsSceneMouseEvent *event)
                QPen(Qt::NoPen),
                QBrush(color));
     prev = event->scenePos();       //save start point
-    if(type==1){
+    if(type==0){
         if(size!=1){
         PixelInicial(event);
         }
         pencil(event);
-    }
-    else if (type == 3)     //bucket
+    }else if (type == 3)     //bucket
     {
         prev = event->scenePos();
         Color b=bmpCanvas.GetColor(0,0);
@@ -70,10 +69,16 @@ void Scene::mousePressEvent(QGraphicsSceneMouseEvent *event)
         bfs(bmpCanvas.getImageWidth(),bmpCanvas.getImageHeight(),bmpCanvas.getImageHeight()-prev.y(),prev.x(),*prevC,*newC);
         bmpCanvas.Export("Canvas.bmp");
         drawImage();
-    }
-    else if  (type == 4)    //eraser
+    }else if  (type == 5)    //Color Picker
     {
-    pencil(event);
+        int x = event->scenePos().x();
+        int y = event->scenePos().y();
+        rojoHex=decToHexa(bmpCanvas.GetColor(bmpCanvas.getImageWidth()-1-y,x).r*255);
+        verdeHex=decToHexa(bmpCanvas.GetColor(bmpCanvas.getImageWidth()-1-y,x).g*255);
+        azulHex=decToHexa(bmpCanvas.GetColor(bmpCanvas.getImageWidth()-1-y,x).b*255);
+        colorHex=numeral+rojoHex+verdeHex+azulHex;
+        colorChar = colorHex.c_str();
+        color=colorChar;
     }
 }
 void Scene::DrawLine(int x1, int y1, int x2, int y2, int dx, int dy, int decide) {
@@ -216,10 +221,14 @@ std::string Scene::decToHexa(int n)
 void Scene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
 
-    if (type != 1&&type != 3&&type != 4)
+    if (type != 0&&type != 3&&type != 4)
         removeItem(items()[0]);     //deleting previous item
                                     //until mouse release
-    if (type == 0)          //line
+    if (type == 0)          //Lapiz
+    {
+        pencil(event);
+    }
+    else if  (type == 1)    //Lapicero
     {
         addLine(prev.x(),
                 prev.y(),
@@ -227,10 +236,7 @@ void Scene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
                 event->scenePos().y(),
                 QPen(color,size,Qt::SolidLine,Qt::SquareCap));
         update();
-    }
-    else if  (type == 1)    //curve
-    {
-        pencil(event);
+
     }
     else if (type == 2)      //rectangle
     {
@@ -247,7 +253,9 @@ void Scene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
                 QPen(color,size,Qt::SolidLine,Qt::SquareCap));
             update();
         }
-
+    }else if  (type == 4)    //eraser
+    {
+        pencil(event);
     }
 }
 
@@ -316,11 +324,12 @@ void Scene::pencil(QGraphicsSceneMouseEvent *event)
         pencilColor = Color(1,1,1);
         color = "#FFFFFF";
     }
-    if(size>1){
+    int pintarx=event->scenePos().x();
+    int pintary=bmpCanvas.getImageHeight()-event->scenePos().y();
+    if(size>4){
         for(int s=0;s<size;s++){
             for(int r=0;r<size;r++){
-                int pintarx=event->scenePos().x();
-                int pintary=bmpCanvas.getImageHeight()-event->scenePos().y();
+
                 if(event->scenePos().y()+size>bmpCanvas.getImageHeight()){
                     pintary=size-1;
                 }
@@ -335,8 +344,21 @@ void Scene::pencil(QGraphicsSceneMouseEvent *event)
             }
         }
     }else{
-        bmpCanvas.SetColor(pencilColor,bmpCanvas.getImageHeight()-event->scenePos().y(),event->scenePos().x());
+        pintarx=event->scenePos().x();
+        pintary=event->scenePos().y();
+        int dx=abs(pintarx - prev.x());
+        int dy=abs(pintary - prev.y());
+        if (dx > dy){
+            //passing argument as 0 to plot(x,y)
+            DrawLine(prev.x(), prev.y(), pintarx, pintary, dx, dy, 0);
+        }
+        //if slope is greater than or equal to 1
+        else{
+            //passing argument as 1 to plot (y,x)
+            DrawLine(prev.y(), prev.x(), pintary, pintarx, dy, dx, 1);
+        }
     }
+
     removeItem(items()[0]);
     addPath(path, QPen(color,size,Qt::SolidLine,Qt::SquareCap));
     color=tempColor;
@@ -353,10 +375,13 @@ void Scene::PixelInicial(QGraphicsSceneMouseEvent *event)
     update();
     prev = event->scenePos();       //save start point
 }
-void Scene::validarCoord()
+void Scene::validarCoordRectangulo()
 {
     if(prev.y()-size<0){
         prev.setY(size);
+    }
+    if(last.x()>bmpCanvas.getImageWidth()){
+        last.setX(bmpCanvas.getImageWidth()-size);
     }
     if(prev.x()+size>bmpCanvas.getImageWidth()){
         prev.setX(prev.x()-size+1);
@@ -377,6 +402,28 @@ void Scene::validarCoord()
     if(last.y()<0){
         if(size>1){
             last.setY(size);
+        }else{
+            last.setY(1);
+        }
+    }
+}
+void Scene::validarCoordLinea()
+{
+    if(prev.y()-size<0){
+        prev.setY(1);
+    }
+    if(last.x()>bmpCanvas.getImageWidth()){
+        last.setX(bmpCanvas.getImageWidth()-1);
+    }
+    if(last.y()>bmpCanvas.getImageWidth()){
+        last.setY(bmpCanvas.getImageWidth());
+    }
+    if(last.x()<0){
+        last.setX(0);
+    }
+    if(last.y()<0){
+        if(size>1){
+            last.setY(1);
         }else{
             last.setY(1);
         }

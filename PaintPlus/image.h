@@ -15,7 +15,6 @@ public:
     void reflejar(bool reflejoVertical);
     void create();
     void cargar(const char *imagenCargada);
-    void print();
     void init(int Width, int Height);
     int getImageHeight();
     int getImageWidth();
@@ -24,8 +23,9 @@ public:
     void grayScale();
     void negativeColors();
     void pixelate();
+    void cellShade();
 private:
-
+    int findClosest(int n);
     const int fileHeaderSize = 14;
     const int informationHeaderSize = 40;
     unsigned char color[3];
